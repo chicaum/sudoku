@@ -8,7 +8,7 @@ use League\CLImate\CLImate;
 
 final class Sudoku {
 
-    const MAX_TRIES = 1000;
+    const MAX_TRIES = 10;
 
     private $cells;
 
@@ -32,7 +32,7 @@ final class Sudoku {
     private function reduceValues() {
         for($line=1; $line<=9; $line++){
             for($column=1; $column<=9; $column++){
-                if(count($this->cells[$line][$column]->getValueRange()) === 1){
+                if(count($this->cells[$line][$column]->getRange()) === 1){
                     $this->eliminateValue($this->cells[$line][$column]);
                 }
             }
@@ -41,8 +41,21 @@ final class Sudoku {
 
     private function eliminateValue(Cell $cell) {
         for($i=1; $i<=9; $i++) {
-            $this->cells[$i][$cell->getColumn()]->removeValueFromRange($cell->getValue());
-            $this->cells[$cell->getLine()][$i]->removeValueFromRange($cell->getValue());
+            if($cell->getLine() === $i && $cell->getColumn() === $i) {
+                continue;
+            }
+            $this->cells[$i][$cell->getColumn()]->removeValue($cell->getValue());
+            $this->checkCellSolved($this->cells[$i][$cell->getColumn()]);
+            $this->cells[$cell->getLine()][$i]->removeValue($cell->getValue());
+            $this->checkCellSolved($this->cells[$cell->getLine()][$i]);
+        }
+    }
+
+    private function checkCellSolved(Cell $cell) {
+        if (count($cell->getRange()) === 1) {
+            $range = $cell->getRange();
+            reset($range);
+            $cell->setValue(current($range));
         }
     }
 
@@ -53,7 +66,7 @@ final class Sudoku {
     public function isSolved() : bool {
         for($line=1; $line<=9; $line++){
             for($column=1; $column<=9; $column++){
-                if(count($this->cells[$line][$column]->getValueRange()) !== 1){
+                if(count($this->cells[$line][$column]->getRange()) !== 1){
                     return false;
                 }
             }

@@ -18,9 +18,29 @@ class SudokuTest extends TestCase {
 
         $sudoku = new Sudoku($cells);
         $sudoku->solve();
-
         $climate = new CLImate();
-        $climate->table($sudoku->getCells());
+        $cells = $sudoku->getCells();
+
+        foreach ($cells as $line => $columns) {
+            foreach ($columns as $cell){
+                if(!$cell->isBlocked() && count($cell->getRange()) === 1){
+                    $climate->inline("\033[34m{$cell->getValue()}\033[0m ");
+                } else {
+                    $climate->inline($cell->getValue() . ' ');
+                }
+            }
+            $climate->br();
+        }
+
+//        $climate->table($cells);
+//
+//        for($line=1; $line<=9; $line++){
+//            for($column=1; $column<=9; $column++){
+//                $value = $cells[$line][$column]->__toString();
+//                $range = implode(',', $cells[$line][$column]->getRange());
+//                $climate->out("$line,$column [$value] ($range)");
+//            }
+//        }
 
         $this->assertTrue($sudoku->isSolved());
     }

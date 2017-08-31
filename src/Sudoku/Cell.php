@@ -12,7 +12,7 @@ class Cell {
 
     private $column;
 
-    private $valueRange;
+    private $range;
 
     private $value;
 
@@ -25,7 +25,7 @@ class Cell {
         $this->column     = $column;
         $this->value      = $value;
         $this->blocked    = 0 !== $value;
-        $this->valueRange = $value ? [$value => $value] :
+        $this->range = $value ? [$value => $value] :
             array_combine(
                 range(1, 9),
                 range(1, 9)
@@ -46,24 +46,22 @@ class Cell {
 
     public function setValue(int $value) {
         $this->value = $value;
-        $this->setBlocked();
-        $this->valueRange = [$value => $value];
-    }
-
-    public function setBlocked() {
-        $this->blocked = true;
+        $this->range = [$value => $value];
     }
 
     public function isBlocked(): bool {
         return $this->blocked;
     }
 
-    public function getValueRange(): array {
-        return $this->valueRange;
+    public function getRange(): array {
+        return $this->range;
     }
 
-    public function removeValueFromRange($value) {
-        unset($this->valueRange[$value]);
+    public function removeValue($value) {
+        if(count($this->range) === 1) {
+            return;
+        }
+        unset($this->range[$value]);
     }
 
     public function __toString() {
