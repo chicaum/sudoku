@@ -26,21 +26,24 @@ class SudokuTest extends TestCase {
                 if(!$cell->isBlocked() && count($cell->getRange()) === 1){
                     $climate->inline("\033[34m{$cell->getValue()}\033[0m ");
                 } else {
-                    $climate->inline($cell->getValue() . ' ');
+                    if($cell->getValue() == 0){
+                        $climate->inline( '  ');
+                    } else {
+                        $climate->inline($cell->getValue() . ' ');
+                    }
                 }
             }
             $climate->br();
         }
 
-//        $climate->table($cells);
-//
-//        for($line=1; $line<=9; $line++){
-//            for($column=1; $column<=9; $column++){
-//                $value = $cells[$line][$column]->__toString();
-//                $range = implode(',', $cells[$line][$column]->getRange());
-//                $climate->out("$line,$column [$value] ($range)");
-//            }
-//        }
+        for($line=1; $line<=9; $line++){
+            for($column=1; $column<=9; $column++){
+                $value = $cells[$line][$column]->__toString();
+                $range = implode(',', $cells[$line][$column]->getRange());
+                $climate->inline("$line,$column [$value] ($range)    ");
+            }
+            $climate->br();
+        }
 
         $this->assertTrue($sudoku->isSolved());
     }
@@ -70,9 +73,21 @@ class SudokuTest extends TestCase {
           [4,5,9,7,6,2,8,1,3]
         ];
 
+        $extremeOneValues = [
+            [0,0,0,0,0,0,0,0,0],
+            [0,0,0,5,2,9,8,0,0],
+            [9,2,0,6,0,0,0,1,0],
+            [5,0,0,0,0,0,3,0,0],
+            [0,0,0,9,4,3,0,0,0],
+            [0,0,1,0,0,0,0,0,6],
+            [0,1,0,0,0,6,0,9,8],
+            [0,0,6,4,3,7,0,0,0],
+            [0,0,0,0,0,0,0,0,0]
+        ];
+
         return [
             [
-                'easy one' => $this->fillCells($easyOneValues)
+                $this->fillCells($extremeOneValues)
             ]
         ];
     }

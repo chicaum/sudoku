@@ -6,26 +6,34 @@ namespace Sudoku;
 
 class Cell {
 
-    private $blocked;
-
     private $line;
 
     private $column;
 
-    private $range;
-
     private $value;
+
+    private $blocked;
+
+    private $quadrantLine;
+
+    private $quadrantColumn;
+
+    private $range;
 
     public function __construct(
         int $line,
         int $column,
         int $value = null
     ) {
-        $this->line       = $line;
-        $this->column     = $column;
-        $this->value      = $value;
-        $this->blocked    = 0 !== $value;
-        $this->range = $value ? [$value => $value] :
+        $this->line           = $line;
+        $this->column         = $column;
+        $this->value          = $value;
+        $this->blocked        = 0 !== $value;
+        $this->quadrantLine   = static::setQuadrant($line);
+        $this->quadrantColumn = static::setQuadrant($column);
+        $this->range          = $value
+            ? [$value => $value]
+            :
             array_combine(
                 range(1, 9),
                 range(1, 9)
@@ -66,5 +74,24 @@ class Cell {
 
     public function __toString() {
        return $this->value > 0 ? (string) $this->value : '';
+    }
+
+    public function getQuadrantLine(): int {
+        return $this->quadrantLine;
+    }
+
+    public function getQuadrantColumn(): int {
+        return $this->quadrantColumn;
+    }
+
+    private static function setQuadrant($value) {
+        if($value<=3){
+            return 1;
+        }
+        if($value > 3 && $value<=6){
+            return 4;
+        }
+
+        return 7;
     }
 }
